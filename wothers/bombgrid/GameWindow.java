@@ -4,15 +4,16 @@ import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
-public class GameWindow extends Frame implements WindowListener {
-    private MenuBar menuBar = new MenuBar();
-    private Menu newGameMenu = new Menu("New Game");
-    private MenuItem beginnerGame = new MenuItem("Beginner");
-    private MenuItem intermediateGame = new MenuItem("Intermediate");
-    private MenuItem expertGame = new MenuItem("Expert");
+public class GameWindow extends Frame {
+    private final MenuBar menuBar = new MenuBar();
+    private final Menu newGameMenu = new Menu("New Game");
+    private final MenuItem beginnerGame = new MenuItem("Beginner");
+    private final MenuItem intermediateGame = new MenuItem("Intermediate");
+    private final MenuItem expertGame = new MenuItem("Expert");
+    private final MenuItem customGame = new MenuItem("Custom...");
     private GamePanel gamePanel;
 
     private enum Difficulty {
@@ -23,59 +24,46 @@ public class GameWindow extends Frame implements WindowListener {
         beginnerGame.addActionListener((e) -> newGame(Difficulty.BEGINNER));
         intermediateGame.addActionListener((e) -> newGame(Difficulty.INTERMEDIATE));
         expertGame.addActionListener((e) -> newGame(Difficulty.EXPERT));
+        customGame.addActionListener((e) -> new CustomGameDialog(this));
         newGameMenu.add(beginnerGame);
         newGameMenu.add(intermediateGame);
         newGameMenu.add(expertGame);
+        newGameMenu.add(customGame);
         menuBar.add(newGameMenu);
-        setMenuBar(menuBar);
 
-        addWindowListener(this);
+        setMenuBar(menuBar);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
         setTitle("BombGrid");
         setResizable(false);
-        setVisible(true);
-
         newGame(Difficulty.BEGINNER);
+        setVisible(true);
     }
 
     void newGame(Difficulty difficulty) {
-        if (gamePanel != null)
-            remove(gamePanel);
         switch (difficulty) {
             case BEGINNER:
-                gamePanel = new GamePanel(8, 8, 10);
+                newGame(8, 8, 10);
                 break;
             case INTERMEDIATE:
-                gamePanel = new GamePanel(16, 16, 40);
+                newGame(16, 16, 40);
                 break;
             case EXPERT:
-                gamePanel = new GamePanel(30, 16, 99);
+                newGame(30, 16, 99);
                 break;
         }
+    }
+
+    void newGame(int width, int height, int bombCount) {
+        if (gamePanel != null)
+            remove(gamePanel);
+        gamePanel = new GamePanel(width, height, bombCount);
         add(gamePanel);
         pack();
         setLocationRelativeTo(null);
     }
-
-    @Override
-    public void windowOpened(WindowEvent e) {}
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        this.dispose();
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {}
-
-    @Override
-    public void windowIconified(WindowEvent e) {}
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {}
-
-    @Override
-    public void windowActivated(WindowEvent e) {}
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {}
 }

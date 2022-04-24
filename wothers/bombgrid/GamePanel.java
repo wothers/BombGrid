@@ -16,7 +16,7 @@ public class GamePanel extends JPanel {
         grid = new BombTile[width][height];
 
         setLayout(new GridLayout(height, width));
-        setPreferredSize(new Dimension(width * 25, height * 25));
+        setPreferredSize(new Dimension(width * 20, height * 20));
 
         Random random = new Random();
         int operations = 0, target = bombCount > width * height / 2 ? width * height - bombCount : bombCount;
