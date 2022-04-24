@@ -1,21 +1,18 @@
 package wothers.bombgrid;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import java.awt.Frame;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
-public class GameWindow extends JFrame implements ActionListener {
-    private JPanel mainPanel = new JPanel(new BorderLayout());
-    private JMenuBar menuBar = new JMenuBar();
-    private JMenu newGameMenu = new JMenu("New Game");
-    private JMenuItem beginnerGame = new JMenuItem("Beginner");
-    private JMenuItem intermediateGame = new JMenuItem("Intermediate");
-    private JMenuItem expertGame = new JMenuItem("Expert");
+public class GameWindow extends Frame implements WindowListener {
+    private MenuBar menuBar = new MenuBar();
+    private Menu newGameMenu = new Menu("New Game");
+    private MenuItem beginnerGame = new MenuItem("Beginner");
+    private MenuItem intermediateGame = new MenuItem("Intermediate");
+    private MenuItem expertGame = new MenuItem("Expert");
     private GamePanel gamePanel;
 
     private enum Difficulty {
@@ -23,30 +20,26 @@ public class GameWindow extends JFrame implements ActionListener {
     }
 
     GameWindow() {
+        beginnerGame.addActionListener((e) -> newGame(Difficulty.BEGINNER));
+        intermediateGame.addActionListener((e) -> newGame(Difficulty.INTERMEDIATE));
+        expertGame.addActionListener((e) -> newGame(Difficulty.EXPERT));
         newGameMenu.add(beginnerGame);
         newGameMenu.add(intermediateGame);
         newGameMenu.add(expertGame);
         menuBar.add(newGameMenu);
-        mainPanel.add(menuBar, BorderLayout.NORTH);
+        setMenuBar(menuBar);
+
+        addWindowListener(this);
+        setTitle("BombGrid");
+        setResizable(false);
+        setVisible(true);
 
         newGame(Difficulty.BEGINNER);
-        mainPanel.add(gamePanel, BorderLayout.CENTER);
-
-        beginnerGame.addActionListener(this);
-        intermediateGame.addActionListener(this);
-        expertGame.addActionListener(this);
-
-        setTitle("BombGrid");
-        setContentPane(mainPanel);
-        setResizable(false);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
-        resetPos();
     }
 
     void newGame(Difficulty difficulty) {
         if (gamePanel != null)
-            mainPanel.remove(gamePanel);
+            remove(gamePanel);
         switch (difficulty) {
             case BEGINNER:
                 gamePanel = new GamePanel(8, 8, 10);
@@ -58,22 +51,31 @@ public class GameWindow extends JFrame implements ActionListener {
                 gamePanel = new GamePanel(30, 16, 99);
                 break;
         }
-        mainPanel.add(gamePanel);
-        resetPos();
-    }
-
-    private void resetPos() {
+        add(gamePanel);
         pack();
         setLocationRelativeTo(null);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(beginnerGame))
-            newGame(Difficulty.BEGINNER);
-        else if (e.getSource().equals(intermediateGame))
-            newGame(Difficulty.INTERMEDIATE);
-        else if (e.getSource().equals(expertGame))
-            newGame(Difficulty.EXPERT);
+    public void windowOpened(WindowEvent e) {}
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        this.dispose();
     }
+
+    @Override
+    public void windowClosed(WindowEvent e) {}
+
+    @Override
+    public void windowIconified(WindowEvent e) {}
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {}
+
+    @Override
+    public void windowActivated(WindowEvent e) {}
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {}
 }

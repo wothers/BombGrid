@@ -16,28 +16,24 @@ public class GamePanel extends JPanel {
         grid = new BombTile[width][height];
 
         setLayout(new GridLayout(height, width));
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (bombCount > width * height / 2)
-                    grid[x][y] = new BombTile(x, y, true, this);
-                else
-                    grid[x][y] = new BombTile(x, y, false, this);
-                this.add(grid[x][y]);
-            }
-        }
         setPreferredSize(new Dimension(width * 25, height * 25));
 
         Random random = new Random();
         int operations = 0, target = bombCount > width * height / 2 ? width * height - bombCount : bombCount;
         while (operations < target) {
-            int x = random.nextInt(width);
-            int y = random.nextInt(height);
-            if (grid[x][y].isBomb() && bombCount > width * height / 2) {
-                grid[x][y].setContainsBomb(false);
+            int x = random.nextInt(width), y = random.nextInt(height);
+            if (grid[x][y] == null) {
+                grid[x][y] = new BombTile(x, y, bombCount <= width * height / 2, this);
                 operations++;
-            } else if (!grid[x][y].isBomb()) {
-                grid[x][y].setContainsBomb(true);
-                operations++;
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (grid[x][y] == null) {
+                    grid[x][y] = new BombTile(x, y, bombCount > width * height / 2, this);
+                }
+                this.add(grid[x][y]);
             }
         }
     }
@@ -45,7 +41,7 @@ public class GamePanel extends JPanel {
     void revealTile(BombTile bombTile) {
         if (bombTile.x == -100)
             return;
-        if (bombTile.isBomb() && !isGameOver) {
+        if (bombTile.isBomb && !isGameOver) {
             isGameOver = true;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
@@ -54,28 +50,28 @@ public class GamePanel extends JPanel {
             }
         } else if (!bombTile.isRevealed()) {
             bombTile.setAsRevealed();
-            if (bombTile.isBomb())
+            if (bombTile.isBomb)
                 bombTile.setImage("bomb");
             else {
                 int adjacentBombs = 0;
                 int x = bombTile.x;
                 int y = bombTile.y;
 
-                if (getTileAt(x + 1, y + 1).isBomb())
+                if (getTileAt(x + 1, y + 1).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x + 1, y).isBomb())
+                if (getTileAt(x + 1, y).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x + 1, y - 1).isBomb())
+                if (getTileAt(x + 1, y - 1).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x, y - 1).isBomb())
+                if (getTileAt(x, y - 1).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x - 1, y - 1).isBomb())
+                if (getTileAt(x - 1, y - 1).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x - 1, y).isBomb())
+                if (getTileAt(x - 1, y).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x - 1, y + 1).isBomb())
+                if (getTileAt(x - 1, y + 1).isBomb)
                     adjacentBombs++;
-                if (getTileAt(x, y + 1).isBomb())
+                if (getTileAt(x, y + 1).isBomb)
                     adjacentBombs++;
 
                 if (adjacentBombs == 0) {

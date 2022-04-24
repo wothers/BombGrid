@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class BombTile extends JButton {
-    private static final MouseListener tileHandler = new MouseAdapter() {
+    private static final MouseListener HANDLER = new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
             BombTile bombTile = (BombTile) e.getSource();
             if (e.getButton() == MouseEvent.BUTTON1)
@@ -18,29 +18,18 @@ public class BombTile extends JButton {
     };
 
     final int x, y;
+    final boolean isBomb;
     private final GamePanel gamePanel;
-    private boolean isBomb, isFlagged = false, isRevealed = false;
+    private boolean isFlagged = false, isRevealed = false;
 
     BombTile(int x, int y, boolean isBomb, GamePanel gamePanel) {
         this.x = x;
         this.y = y;
-        this.gamePanel = gamePanel;
         this.isBomb = isBomb;
+        this.gamePanel = gamePanel;
         setImage("blank");
         setBorderPainted(false);
-        addMouseListener(tileHandler);
-    }
-
-    void setImage(String filename) {
-        this.setIcon(new ImageIcon(getClass().getResource("/images/" + filename + ".png")));
-    }
-
-    boolean isBomb() {
-        return isBomb;
-    }
-
-    void setContainsBomb(boolean isBomb) {
-        this.isBomb = isBomb;
+        addMouseListener(HANDLER);
     }
 
     boolean isRevealed() {
@@ -49,6 +38,10 @@ public class BombTile extends JButton {
 
     void setAsRevealed() {
         isRevealed = true;
+    }
+
+    void setImage(String filename) {
+        this.setIcon(new ImageIcon(getClass().getResource("/images/" + filename + ".png")));
     }
 
     private void leftClicked() {
